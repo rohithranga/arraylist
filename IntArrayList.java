@@ -7,9 +7,17 @@ public class IntArrayList {
         data = new int[10];
         size = 0;
     }
+
     public IntArrayList(int capacity) {//initializing the array for any possible capacity
         data = new int[capacity];
         size = 0;
+    }
+
+    private boolean isValidIndex(int index) {
+        if (index < size && index >= 0) {
+            return true;
+        }
+        return false;
     }
 
     private void reallocate() {
@@ -21,13 +29,13 @@ public class IntArrayList {
     }
 
     private void shiftLeft(int position) {
-    for (int i = position; i < size - 1; i++) {
-        data[i] = data[i + 1];
+        for (int i = position; i < size - 1; i++) {
+            data[i] = data[i + 1];
+        }
+        size--;
     }
-    size--;
-}
 
-private void shiftRight(int position) {
+    private void shiftRight(int position) {
         if (size == data.length) {
             reallocate();
         }
@@ -57,13 +65,14 @@ private void shiftRight(int position) {
         size++;
     }
 
-    public int remove(int index) {
+    public int removeAt(int index) {
         int removed = data[index];
         shiftLeft();
         size--;
         return removed;
     }
 
+<<<<<<< HEAD
     //Override
     public boolean equals(Object otherIntArrayList) {
         if (size != other.size) {
@@ -104,4 +113,47 @@ private void shiftRight(int position) {
         return -1; 
     }
 
+=======
+    public boolean removeVal(int val) {
+        for (int i : data) {
+            if (i == val) {
+                removeAt(i);
+                return true;
+            }
+        }
+        return false;
+>>>>>>> b5a3b5777e7d70c7210981152f23e84429cfb7dd
     }
+    
+    @Override
+    public String toString() {
+        if (isEmpty()) return "empty";
+        String str = "";
+        for (int i : data) {
+            str += i + ", ";
+        }
+        return str;
+    }
+
+    public boolean isEmpty() {
+        if (size == 0) return true;
+        return false;
+    }
+
+    public int get(int index) {
+        if (isValidIndex(index)) {
+            return data[index];
+        } else {
+            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
+        }
+    }
+    
+    public void set(int index, int val) {
+        if (isValidIndex(index)) {
+            data[index] = val;
+        } else {
+            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
+        }
+    }
+    
+}
