@@ -470,6 +470,25 @@ public class IntArrayList implements Iterable<Integer> {
     
         return smoothedData;
     }
+
+    public boolean isSkewed() {
+        if (size == 0) {
+            return false;
+        }
+    
+        double mean = average();
+        double median = percentile(50);
+        double sd = stDev();
+    
+        if (sd == 0) {
+            return false;
+        }
+    
+        double skewnessCoefficient = 3 * (mean - median) / sd;
+    
+        return Math.abs(skewnessCoefficient) > 1;
+    }
+
     public static void main(String[] args) {
         // IntArrayList list = new IntArrayList();
 
