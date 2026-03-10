@@ -52,20 +52,56 @@ private void shiftRight(int position) {
         if (size == data.length) {
             reallocate();
         }
-        for (int i = size; i > index; i--) {
-            data[i] = data[i - 1];
-        }
+        shiftRight();
         data[index] = value;
         size++;
     }
 
     public int remove(int index) {
         int removed = data[index];
-        for (int i = index; i < size - 1; i++) {
-            data[i] = data[i + 1];
-        }
+        shiftLeft();
         size--;
         return removed;
     }
-    
+
+    //Override
+    public boolean equals(Object otherIntArrayList) {
+        if (size != other.size) {
+        return false;
+    }
+         for (int i = 0; i < size; i++) {
+        if (data[i] != otherIntArrayList.data[i]) {
+            return false;
+        }
+    }
+    return true;
+    }
+
+    public int [] toArray() {
+        int[] array = new int[size];
+        for(int i = 0; i < size; i++) {
+            array[i] = data[i];
+        }
+        return array; 
+    }
+
+    public boolean contains(int val) {
+        for(int i = 0; i < size; i++) {
+            if(data[i] == val) {
+                return true; 
+            }
+        }
+        return false; 
+    }
+
+    public int indexOf(int val) {
+        for(int i = 0; i < size; i++) {
+            if(data[i] == val) {
+                return i;
+            }
+        }
+
+        return -1; 
+    }
+
     }
