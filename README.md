@@ -1,3 +1,6 @@
+Built by: Rohith Ranga, Anu Vadera, Ananya Agarwal, and Josh Anderson
+
+---
 # IntArrayList
 
 `IntArrayList` is a custom implementation of a dynamic array for integers in Java, similar to Java's built-in `ArrayList<Integer>`, but optimized for primitive `int` values. The class automatically resizes when capacity is exceeded and provides a wide range of utility functions for data manipulation, statistical analysis, and forecasting.
