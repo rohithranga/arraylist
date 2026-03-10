@@ -93,15 +93,18 @@ public class IntArrayList implements Iterable<Integer> {
     @Override
     public String toString() {
         if (isEmpty()) return "empty";
-
-        String str = "";
+    
+        StringBuilder str = new StringBuilder();
+    
         for (int i = 0; i < size; i++) {
-            str += data[i];
+            str.append(data[i]);
+    
             if (i < size - 1) {
-                str += ", ";
+                str.append(", ");
             }
         }
-        return str;
+    
+        return str.toString();
     }
 
     public boolean isEmpty() {
@@ -173,9 +176,6 @@ public class IntArrayList implements Iterable<Integer> {
     }
     
     public void clear() {
-        for(int i = 0; i < size; i++) {
-            data[i] = 0; 
-        }
         size = 0; 
     }
 
@@ -268,21 +268,23 @@ public class IntArrayList implements Iterable<Integer> {
         return true;
     }
 
-    public double StDev() {
+    public double stDev() {
+        if (size == 0) return 0;
+    
         double mean = average();
         double sumOfDiff = 0;
-
+    
         for (int i = 0; i < size; i++) {
-            double x = ((data[i] - mean) * (data[i] - mean));
+            double x = (data[i] - mean) * (data[i] - mean);
             sumOfDiff += x;
         }
-
+    
         return Math.sqrt(sumOfDiff / size);
     }
 
     public int minVal() {
         if (isEmpty()) {
-            return 0;
+            throw new IllegalStateException("List is empty");
         }
     
         if (isSorted()) {
@@ -302,7 +304,7 @@ public class IntArrayList implements Iterable<Integer> {
 
     public int maxVal() {
         if (isEmpty()) {
-            return 0;
+            throw new IllegalStateException("List is empty");
         }
     
         if (isSorted()) {
@@ -337,6 +339,137 @@ public class IntArrayList implements Iterable<Integer> {
         }
     }
 
+    public double percentile(double p) {
+        if (p < 0 || p > 100) {
+            throw new IllegalArgumentException("Percentile must be between 0 and 100");
+        }
+
+        if (!isSorted()) {
+            mergeSort();
+        }
+        double index = (p / 100.0) * (size - 1);
+        int lower = (int) index;
+        int upper = lower + 1;
+
+        if (upper >= size) {
+            return data[lower];
+        }
+        double fraction = index - lower;
+        return data[lower] + fraction * (data[upper] - data[lower]);
+    }
+
+    public double avgGrowthRate() {
+        if (size < 2) {
+            return 0;
+        }
+        int count = 0;
+        double growthR = 0;
+
+        for (int i = 1; i < size; i++) {
+            if (data[i - 1] == 0) continue;
+
+            growthR += (double)(data[i] - data[i - 1]) / data[i - 1] * 100;
+            count++;
+        }
+
+        if (count == 0) return 0;
+
+        return growthR / count;
+    }
+
+    public IntArrayList forecast(int periods) {
+        if (size == 0) {
+            throw new IllegalStateException("Cannot forecast with empty dataset");
+        }
+        if (periods <= 0) {
+            throw new IllegalArgumentException("Periods must be greater than 0");
+        }
+        double avgGrowth = avgGrowthRate() / 100.0;
+        IntArrayList forecastV = new IntArrayList();
+        for (int i = 0; i < size; i++) {
+            forecastV.add(data[i]);
+        }
+        int lastValue = data[size - 1];
+        for (int i = 0; i < periods; i++) {
+            lastValue = (int)(lastValue * (1 + avgGrowth));
+            forecastV.add(lastValue);
+        }
+    
+        return forecastV;
+    }
+
+    public double volatility() {
+        if (average() == 0) return 0;
+        return (stDev() / average()) * 100;
+    }
+
+    public double iqr() {
+        return percentile(75) - percentile(25);
+    }
+
+    public IntArrayList findOutliersIQR() { //for skewed datasets
+        if (!isSorted()) {
+            mergeSort();
+        }
+
+        double lowerBound = percentile(25) - 1.5 * iqr();
+        double upperBound = percentile(75) + 1.5 * iqr();
+
+        IntArrayList outliers = new IntArrayList();
+        for (int i = 0; i < size; i++) {
+            if (data[i] < lowerBound || data[i] > upperBound) {
+                outliers.add(data[i]);
+            }
+        }
+        return outliers;
+    }
+
+    public IntArrayList findOutliersStdDev() { //for symmetrical datasets and distrubutions
+        double mean = average();
+        double stdDev = stDev();
+        double lowerBound = mean - 2 * stdDev;
+        double upperBound = mean + 2 * stdDev;
+
+        IntArrayList outliers = new IntArrayList();
+        for (int i = 0; i < size; i++) {
+            if (data[i] < lowerBound || data[i] > upperBound) {
+                outliers.add(data[i]);
+            }
+        }
+        return outliers;
+    }
+
+
+
+    public IntArrayList valuesAbove(int threshold) {
+        IntArrayList aboveThreshold = new IntArrayList();
+        for (int i = 0; i < size; i++) {
+            if (data[i] > threshold) {
+                aboveThreshold.add(data[i]);
+            }
+        }
+        return aboveThreshold;
+    }
+
+    public IntArrayList movingAverage(int period) {
+        if (period <= 0 || period > size) {
+            throw new IllegalArgumentException("Invalid period");
+        }
+    
+        IntArrayList smoothedData = new IntArrayList();
+    
+        for (int i = 0; i <= size - period; i++) {
+            int total = 0;
+    
+            for (int j = i; j < i + period; j++) {
+                total += data[j];
+            }
+    
+            smoothedData.add(total / period);
+        }
+    
+        return smoothedData;
+    }
     public static void main(String[] args) {
         // IntArrayList list = new IntArrayList();
 
@@ -365,7 +498,7 @@ public class IntArrayList implements Iterable<Integer> {
 
         System.out.println("List1: " + list1);
         System.out.println("isSorted: " + list1.isSorted());
-        System.out.println("Standard Deviation: " + list1.StDev());
+        System.out.println("Standard Deviation: " + list1.stDev());
         System.out.println();
 
 
@@ -378,7 +511,7 @@ public class IntArrayList implements Iterable<Integer> {
 
         System.out.println("List2: " + list2);
         System.out.println("isSorted: " + list2.isSorted());
-        System.out.println("Standard Deviation: " + list2.StDev());
+        System.out.println("Standard Deviation: " + list2.stDev());
         System.out.println();
 
 
@@ -388,7 +521,7 @@ public class IntArrayList implements Iterable<Integer> {
 
         System.out.println("List3: " + list3);
         System.out.println("isSorted: " + list3.isSorted());
-        System.out.println("Standard Deviation: " + list3.StDev());
+        System.out.println("Standard Deviation: " + list3.stDev());
         System.out.println();
 
 
@@ -401,7 +534,7 @@ public class IntArrayList implements Iterable<Integer> {
 
         System.out.println("List4: " + list4);
         System.out.println("isSorted: " + list4.isSorted());
-        System.out.println("Standard Deviation: " + list4.StDev());
+        System.out.println("Standard Deviation: " + list4.stDev());
     }
 
 }
