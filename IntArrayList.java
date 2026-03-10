@@ -279,6 +279,64 @@ public class IntArrayList implements Iterable<Integer> {
 
         return Math.sqrt(sumOfDiff / size);
     }
+
+    public int minVal() {
+        if (isEmpty()) {
+            return 0;
+        }
+    
+        if (isSorted()) {
+            return data[0];
+        }
+    
+        int min = data[0];
+    
+        for (int i = 1; i < size; i++) {
+            if (data[i] < min) {
+                min = data[i];
+            }
+        }
+    
+        return min;
+    }
+
+    public int maxVal() {
+        if (isEmpty()) {
+            return 0;
+        }
+    
+        if (isSorted()) {
+            return data[size - 1];
+        }
+    
+        int max = data[0];
+    
+        for (int i = 1; i < size; i++) {
+            if (data[i] > max) {
+                max = data[i];
+            }
+        }
+    
+        return max;
+    }
+
+    public double median() {
+        if (isEmpty()) {
+            return 0;
+        }
+    
+        int[] arr = toArray(); // copy of list
+    
+        // sort the copy
+        java.util.Arrays.sort(arr);
+    
+        if (size % 2 == 1) {
+            return arr[size / 2];
+        } else {
+            return (arr[size / 2 - 1] + arr[size / 2]) / 2.0;
+        }
+    }
+
     public static void main(String[] args) {
         // IntArrayList list = new IntArrayList();
 
