@@ -1,5 +1,4 @@
 public class IntArrayList {
-
     private int[] data;
     private int size; //how many real values have been stored
 
@@ -42,6 +41,7 @@ public class IntArrayList {
         for (int i = size; i > position; i--) {
             data[i] = data[i - 1];
         }
+        size++;
     }
     
     public int size() {
@@ -57,33 +57,85 @@ public class IntArrayList {
     }
 
     public void add(int index, int value) {
-        if (size == data.length) {
-            reallocate();
+        if (index < 0 || index > size) {
+            throw new ArrayIndexOutOfBoundsException("The index " + index + " is out of bounds.");
         }
-        shiftRight();
+        shiftRight(index);
         data[index] = value;
-        size++;
     }
 
     public int removeAt(int index) {
+        if (!isValidIndex(index)) {
+            throw new ArrayIndexOutOfBoundsException("The index " + index + " is out of bounds.");
+        }
         int removed = data[index];
-        shiftLeft();
-        size--;
+        shiftLeft(index);
         return removed;
     }
 
-<<<<<<< HEAD
-    //Override
-    public boolean equals(Object otherIntArrayList) {
-        if (size != other.size) {
+    public boolean removeVal(int val) {
+        for (int i = 0; i < size; i++) {
+            if (data[i] == val) {
+                removeAt(i);
+                return true;
+            }
+        }
         return false;
     }
-         for (int i = 0; i < size; i++) {
-        if (data[i] != otherIntArrayList.data[i]) {
-            return false;
+    
+    @Override
+    public String toString() {
+        if (isEmpty()) return "empty";
+
+        String str = "";
+        for (int i = 0; i < size; i++) {
+            str += data[i];
+            if (i < size - 1) {
+                str += ", ";
+            }
+        }
+        return str;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public int get(int index) {
+        if (isValidIndex(index)) {
+            return data[index];
+        } else {
+            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
         }
     }
-    return true;
+    
+    public void set(int index, int val) {
+        if (isValidIndex(index)) {
+            data[index] = val;
+        } else {
+            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
+        }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof IntArrayList)) {
+            return false;
+        }
+
+        IntArrayList otherList = (IntArrayList) other;
+
+        if (this.size != otherList.size) {
+            return false;
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (this.data[i] != otherList.data[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public int [] toArray() {
@@ -113,46 +165,29 @@ public class IntArrayList {
         return -1; 
     }
 
-=======
-    public boolean removeVal(int val) {
-        for (int i : data) {
-            if (i == val) {
-                removeAt(i);
-                return true;
+    public class IntArrayList2 {
+
+        private int[] data;
+        private int size; //how many real values have been stored
+    
+    
+        public void clear() {
+            for(int i = 0; i < size; i++) {
+                data[i] = 0; 
             }
+            size = 0; 
         }
-        return false;
->>>>>>> b5a3b5777e7d70c7210981152f23e84429cfb7dd
-    }
     
-    @Override
-    public String toString() {
-        if (isEmpty()) return "empty";
-        String str = "";
-        for (int i : data) {
-            str += i + ", ";
+        public int sum() {
+            int sum = 0; 
+            for(int i = 0; i < size; i++) {
+                sum += data[i];
+            }
+            return sum; 
         }
-        return str;
-    }
-
-    public boolean isEmpty() {
-        if (size == 0) return true;
-        return false;
-    }
-
-    public int get(int index) {
-        if (isValidIndex(index)) {
-            return data[index];
-        } else {
-            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
-        }
-    }
     
-    public void set(int index, int val) {
-        if (isValidIndex(index)) {
-            data[index] = val;
-        } else {
-            throw new ArrayIndexOutOfBoundsException("The index " +  index + " is out of bounds.");
+        public double average() {
+            return (double) sum()/size ; 
         }
     }
     
