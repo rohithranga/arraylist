@@ -1,6 +1,13 @@
-public class IntArrayList {
+import java.util.Iterator;
+
+public class IntArrayList implements Iterable<Integer> {
     private int[] data;
     private int size; //how many real values have been stored
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new IntArrayListIterator(data, size);
+    }
 
     public IntArrayList() { //initializing the array
         data = new int[10];
@@ -164,31 +171,38 @@ public class IntArrayList {
 
         return -1; 
     }
-
-    public class IntArrayList2 {
-
-        private int[] data;
-        private int size; //how many real values have been stored
     
-    
-        public void clear() {
-            for(int i = 0; i < size; i++) {
-                data[i] = 0; 
-            }
-            size = 0; 
+    public void clear() {
+        for(int i = 0; i < size; i++) {
+            data[i] = 0; 
         }
-    
-        public int sum() {
-            int sum = 0; 
-            for(int i = 0; i < size; i++) {
-                sum += data[i];
-            }
-            return sum; 
+        size = 0; 
+    }
+
+    public int sum() {
+        int sum = 0; 
+        for(int i = 0; i < size; i++) {
+            sum += data[i];
         }
-    
-        public double average() {
-            return (double) sum()/size ; 
+        return sum; 
+    }
+
+    public double average() {
+        if (size == 0) return 0;
+        return (double) sum()/size; 
+    }
+
+
+    public static void main(String[] args) {
+        IntArrayList list = new IntArrayList();
+
+        list.add(5);
+        list.add(10);
+        list.add(15);
+
+        for(int x : list){
+            System.out.println(x);
         }
     }
-    
+
 }
