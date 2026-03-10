@@ -192,17 +192,158 @@ public class IntArrayList implements Iterable<Integer> {
         return (double) sum()/size; 
     }
 
-
-    public static void main(String[] args) {
-        IntArrayList list = new IntArrayList();
-
-        list.add(5);
-        list.add(10);
-        list.add(15);
-
-        for(int x : list){
-            System.out.println(x);
+    public void mergeSort() {
+        if (size <= 1) {
+            return;
         }
+        mergeSortHelper(0, size - 1);
+    }
+    
+    private void mergeSortHelper(int left, int right) {
+        if (left >= right) {
+            return;
+        }
+    
+        int mid = (left + right) / 2;
+    
+        mergeSortHelper(left, mid);
+        mergeSortHelper(mid + 1, right);
+    
+        merge(left, mid, right);
+    }
+    
+    private void merge(int left, int mid, int right) {
+    
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+    
+        int[] leftArr = new int[n1];
+        int[] rightArr = new int[n2];
+    
+        for (int i = 0; i < n1; i++) {
+            leftArr[i] = data[left + i];
+        }
+    
+        for (int j = 0; j < n2; j++) {
+            rightArr[j] = data[mid + 1 + j];
+        }
+    
+        int i = 0;
+        int j = 0;
+        int k = left;
+    
+        while (i < n1 && j < n2) {
+            if (leftArr[i] <= rightArr[j]) {
+                data[k] = leftArr[i];
+                i++;
+            } else {
+                data[k] = rightArr[j];
+                j++;
+            }
+            k++;
+        }
+    
+        while (i < n1) {
+            data[k] = leftArr[i];
+            i++;
+            k++;
+        }
+    
+        while (j < n2) {
+            data[k] = rightArr[j];
+            j++;
+            k++;
+        }
+    }
+
+    public boolean isSorted() {
+        if (data == null || data.length < 2) {
+            return true;
+        }
+        for (int i = 0; i < size - 1; i++) {
+            if (data[i] > data[i + 1]) {
+                return false; 
+            }
+        }       
+        return true;
+    }
+
+    public double StDev() {
+        double mean = average();
+        double sumOfDiff = 0;
+
+        for (int i = 0; i < size; i++) {
+            double x = ((data[i] - mean) * (data[i] - mean));
+            sumOfDiff += x;
+        }
+
+        return Math.sqrt(sumOfDiff / size);
+    }
+    public static void main(String[] args) {
+        // IntArrayList list = new IntArrayList();
+
+        // list.add(5);
+        // list.add(10);
+        // list.add(15);
+
+        // for(int x : list){
+        //     System.out.println(x);
+        // }
+
+        // list.add(5);
+        // list.add(1);
+        // list.add(9);
+        // list.add(2);
+        // list.add(6);
+
+        // list.mergeSort();
+
+        // System.out.println(list);
+        IntArrayList list1 = new IntArrayList();
+        list1.add(1);
+        list1.add(2);
+        list1.add(3);
+        list1.add(4);
+
+        System.out.println("List1: " + list1);
+        System.out.println("isSorted: " + list1.isSorted());
+        System.out.println("Standard Deviation: " + list1.StDev());
+        System.out.println();
+
+
+        // TEST 2: Unsorted list
+        IntArrayList list2 = new IntArrayList();
+        list2.add(5);
+        list2.add(1);
+        list2.add(8);
+        list2.add(3);
+
+        System.out.println("List2: " + list2);
+        System.out.println("isSorted: " + list2.isSorted());
+        System.out.println("Standard Deviation: " + list2.StDev());
+        System.out.println();
+
+
+        // TEST 3: Single element
+        IntArrayList list3 = new IntArrayList();
+        list3.add(10);
+
+        System.out.println("List3: " + list3);
+        System.out.println("isSorted: " + list3.isSorted());
+        System.out.println("Standard Deviation: " + list3.StDev());
+        System.out.println();
+
+
+        // TEST 4: Identical numbers (stdev should be 0)
+        IntArrayList list4 = new IntArrayList();
+        list4.add(7);
+        list4.add(7);
+        list4.add(7);
+        list4.add(7);
+
+        System.out.println("List4: " + list4);
+        System.out.println("isSorted: " + list4.isSorted());
+        System.out.println("Standard Deviation: " + list4.StDev());
     }
 
 }
